@@ -1,4 +1,4 @@
-# QuizMaster 2026 - CodeSoft Java Internship
+# QuizMaster
 
 Welcome to **QuizMaster 2026**, a modern, premium desktop application built for the **CodeSoft Java Internship Task 4 (Quiz Application)**. 
 
