@@ -14,13 +14,12 @@ import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 
 /**
- * A custom radio button designed for modern UI, avoiding standard OS look.
- * Fixes text clipping by calculating the exact preferred size for custom graphics.
+ * 2026 Trend: Replaces standard tiny radio buttons with Premium Full-Width Option Cards.
+ * Gives a highly satisfying hover and selection glow effect.
  */
 public class RoundedRadioButton extends JRadioButton {
     private boolean isHovered = false;
-    private final int circleSize = 20;
-    private final int gap = 15;
+    private final int cornerRadius = 20;
 
     public RoundedRadioButton(String text) {
         super(text);
@@ -39,28 +38,14 @@ public class RoundedRadioButton extends JRadioButton {
         });
     }
 
-    /**
-     * Tells the Layout Manager exactly how much space this custom component needs.
-     */
     @Override
     public Dimension getPreferredSize() {
-        FontMetrics fm = getFontMetrics(getFont());
-        String text = getText() != null ? getText() : "";
-        int textWidth = fm.stringWidth(text);
-
-        // Width = circle + gap + text width + extra padding to avoid clipping
-        int width = circleSize + gap + textWidth + 20;
-        int height = Math.max(circleSize, fm.getHeight()) + 10;
-
-        return new Dimension(width, height);
+        return new Dimension(Integer.MAX_VALUE, 65); // Full width, tall card
     }
 
-    /**
-     * Allows the component to stretch horizontally in BoxLayout if needed.
-     */
     @Override
     public Dimension getMaximumSize() {
-        return new Dimension(Integer.MAX_VALUE, getPreferredSize().height);
+        return new Dimension(Integer.MAX_VALUE, 65);
     }
 
     @Override
@@ -70,25 +55,48 @@ public class RoundedRadioButton extends JRadioButton {
         g2d.setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING, RenderingHints.VALUE_TEXT_ANTIALIAS_ON);
 
         ThemeManager theme = ThemeManager.getInstance();
-        int yOffset = (getHeight() - circleSize) / 2;
 
-        // Draw Outer Circle
-        g2d.setColor(isHovered ? theme.getAccentColor() : theme.getTextSecondary());
-        g2d.drawOval(0, yOffset, circleSize, circleSize);
+        // Background logic
+        if (isSelected()) {
+            g2d.setColor(new Color(theme.getAccentColor().getRed(), theme.getAccentColor().getGreen(), theme.getAccentColor().getBlue(), 30));
+        } else if (isHovered) {
+            g2d.setColor(theme.getGlassColor());
+        } else {
+            g2d.setColor(new Color(0, 0, 0, 50));
+        }
+        g2d.fillRoundRect(0, 0, getWidth() - 2, getHeight() - 2, cornerRadius, cornerRadius);
 
-        // Draw Inner Circle if Selected
+        // Border logic
         if (isSelected()) {
             g2d.setColor(theme.getAccentColor());
-            g2d.fillOval(4, yOffset + 4, circleSize - 8, circleSize - 8);
+            g2d.setStroke(new java.awt.BasicStroke(2.0f));
+        } else if (isHovered) {
+            g2d.setColor(theme.getGlassBorder());
+            g2d.setStroke(new java.awt.BasicStroke(1.5f));
+        } else {
+            g2d.setColor(new Color(255, 255, 255, 20));
+            g2d.setStroke(new java.awt.BasicStroke(1.0f));
+        }
+        g2d.drawRoundRect(1, 1, getWidth() - 3, getHeight() - 3, cornerRadius, cornerRadius);
+
+        // Indicator Dot
+        int dotSize = 16;
+        int dotY = (getHeight() - dotSize) / 2;
+        if (isSelected()) {
+            g2d.setColor(theme.getAccentColor());
+            g2d.fillOval(20, dotY, dotSize, dotSize);
+        } else {
+            g2d.setColor(theme.getTextSecondary());
+            g2d.drawOval(20, dotY, dotSize, dotSize);
         }
 
-        // Draw Text
+        // Text
         if (getText() != null) {
-            g2d.setColor(theme.getTextPrimary());
-            g2d.setFont(getFont());
+            g2d.setColor(isSelected() ? theme.getAccentColor() : theme.getTextPrimary());
+            g2d.setFont(isSelected() ? ThemeManager.getInstance().getBoldFont() : getFont());
             FontMetrics fm = g2d.getFontMetrics();
             int textY = ((getHeight() - fm.getHeight()) / 2) + fm.getAscent();
-            g2d.drawString(getText(), circleSize + gap, textY);
+            g2d.drawString(getText(), 50, textY); // Padding from the dot
         }
 
         g2d.dispose();

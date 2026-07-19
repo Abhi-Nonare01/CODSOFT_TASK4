@@ -26,10 +26,17 @@ public class RoundedButton extends JButton {
     private float alpha = 0.0f;
     private boolean isHovered = false;
 
+    // Constructor 1: Only Text
     public RoundedButton(String text) {
         this(text, ThemeManager.getInstance().getAccentColor(), ThemeManager.getInstance().getAccentHoverColor(), 20);
     }
 
+    // Constructor 2: Text + 2 Colors (Fix for the error)
+    public RoundedButton(String text, Color baseColor, Color hoverColor) {
+        this(text, baseColor, hoverColor, 20);
+    }
+
+    // Constructor 3: Text + 2 Colors + Custom Corner Radius
     public RoundedButton(String text, Color baseColor, Color hoverColor, int cornerRadius) {
         super(text);
         this.cornerRadius = cornerRadius;
@@ -71,6 +78,18 @@ public class RoundedButton extends JButton {
         repaint();
     }
 
+    @Override
+    public void setEnabled(boolean b) {
+        super.setEnabled(b);
+        if (!b) {
+            currentColor = new Color(100, 116, 139);
+            isHovered = false;
+        } else {
+            currentColor = defaultColor;
+        }
+        repaint();
+    }
+
     private void startAnimation() {
         if (animationTimer != null && animationTimer.isRunning()) {
             animationTimer.stop();
@@ -104,14 +123,12 @@ public class RoundedButton extends JButton {
         if (isEnabled()) {
             g2d.setColor(new Color(0, 0, 0, 40));
             g2d.fillRoundRect(0, 3, getWidth(), getHeight() - 3, cornerRadius, cornerRadius);
-        } else {
-            currentColor = new Color(100, 116, 139);
         }
 
         g2d.setColor(currentColor);
         g2d.fillRoundRect(0, 0, getWidth(), getHeight() - 3, cornerRadius, cornerRadius);
 
-        if (getText() != null) {
+        if (getText() != null && !getText().isEmpty()) {
             g2d.setColor(getForeground());
             g2d.setFont(getFont());
             FontMetrics fm = g2d.getFontMetrics();
