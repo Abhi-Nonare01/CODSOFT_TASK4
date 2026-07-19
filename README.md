@@ -41,3 +41,14 @@ src
 └── utils
        ThemeManager.java         # Singleton Color & Typography State
        TimerManager.java         # Utility for the 30-second Countdown
+
+```
+
+
+ScreenShots:
+
+<img width="644" height="569" alt="image" src="https://github.com/user-attachments/assets/079d004b-524f-40cf-aa05-8c2da7d01b0a" />
+
+<img width="934" height="671" alt="image" src="https://github.com/user-attachments/assets/9d66357b-e7fd-4e8e-af06-81a4d0696f2c" />
+
+
